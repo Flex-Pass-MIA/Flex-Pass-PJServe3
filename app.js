@@ -10,6 +10,9 @@ const logger       = require('morgan');
 const path         = require('path');
 
 
+console.log('Hey Jose');
+
+
 mongoose.Promise = Promise;
 mongoose
   .connect('mongodb://localhost/server', {useMongoClient: true})
