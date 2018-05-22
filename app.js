@@ -12,6 +12,8 @@ const User         = require('./models/user');
 const session      = require("express-session");
 const bcrypt       = require("bcrypt");
 const passport     = require("passport");
+const axios = require("axios");
+const busy_hours = require('busy-hours');
 const LocalStrategy= require("passport-local").Strategy;
 const flash        = require("connect-flash");
 const cors         = require('cors');
@@ -32,8 +34,8 @@ const app = express();
 
 // Middleware Setup
 app.use(logger('dev'));
-app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
 app.use(cookieParser());
 
 // Express View engine setup
@@ -101,6 +103,8 @@ app.use(
 
 const authRoute = require('./routes/user-route');
 app.use('/api', authRoute);
+const searchRoute = require('./routes/search-route');
+app.use('/search', searchRoute);
 const index = require('./routes/index');
 app.use('/', index);
 
