@@ -48,6 +48,7 @@ router.get("/login", (req, res, next) => {
 
 router.post('/login', (req, res, next) => {
   passport.authenticate('local', (err, theUser, failureDetails) => {
+    // console.log(`the user---> ${theUser}`)
     if (err) {
       res.status(500).json({ message: 'Something went wrong' });
       return;

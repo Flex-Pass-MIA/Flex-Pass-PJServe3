@@ -12,6 +12,7 @@ const User         = require('./models/user');
 const session      = require("express-session");
 const bcrypt       = require("bcrypt");
 const passport     = require("passport");
+const axios = require("axios");
 const LocalStrategy= require("passport-local").Strategy;
 const flash        = require("connect-flash");
 const cors         = require('cors');
@@ -101,6 +102,8 @@ app.use(
 
 const authRoute = require('./routes/user-route');
 app.use('/api', authRoute);
+const searchRoute = require('./routes/search-route');
+app.use('/search', searchRoute);
 const index = require('./routes/index');
 app.use('/', index);
 
