@@ -17,55 +17,84 @@ router.post('/gymsearch', (req, res, next) => {
   console.log("req.body ???????????????????????????", req.body)
   const search = req.body.searchTerm;
   console.log('body whatever this is ----------', search)
-
-axios.get(`https://maps.googleapis.com/maps/api/place/textsearch/json?query=${search}&type=gym&location=25.761681,-80.191788&radius=8050&key=AIzaSyCUertGINeIoS4nQ7zpyuJzqyUg1PhXXws`)
-    .then((result)=>{
-      // console.log("this is the result!!--->", result) //<<<just objects
-      // console.log("this is the data--->", result.data) //<<<gives info
-      const data = [];
-  
+  axios.get(`https://maps.googleapis.com/maps/api/place/textsearch/json?query=${search}&type=gym&location=25.761681,-80.191788&radius=8050&key=AIzaSyCUertGINeIoS4nQ7zpyuJzqyUg1PhXXws`)
+  .then((result)=>{
+    // console.log("this is the result!!--->", result) //<<<just objects
+    
+    // console.log("this is the data--->", result.data) //<<<gives info
+    
+    // array_of_promises = []
+    const data = [];
+    
+    const idSearch = result.data.results;
+    console.log("the results +++++++++===============++++++++++++++++++=============", result.data.results);
+    idSearch.forEach(id => {
+      
       const dataToSend = {
         name:'',
         place_id:'',
         day:[],
       };
       
-      const idSearch = result.data.results;
-  
-      idSearch.forEach(id => {
-  
-  
-        dataToSend.name = id.name;
-        dataToSend.place_id = id.place_id;
-        placeID = id.place_id;
-  
+     dataToSend.name = id.name;
+     dataToSend.place_id = id.place_id;
+
+
+          placeID = id.place_id;
+
+          // const the_promise_thing;
+
+          // array_of_promises.push(the_promise_thing);
+    
+          // the_promise_thing = busy_hours(placuOd,...
+
+          
+          console.log("in the middle data console log -------------------------------->", dataToSend.day)
           busy_hours(placeID, 'AIzaSyCUertGINeIoS4nQ7zpyuJzqyUg1PhXXws' )
           .then(busyhours => {
+            console.log("something inside busy hours =====================================", busyhours)
+            
+            // res.json(busyhours)
             dataToSend.day.push(busyhours.week);
             
-            console.log("something something something something", data)
-  
             
           });
+
+          data.push(Object.assign({},dataToSend));
           
-          return data.push(Object.assign({},dataToSend));
-  
-          console.log("in the middle data console log ----->", data)
-          
+          // console.log("this is inside the for each but not busy hours -> ", id)
+          // return dataToSend.day.push(id.week);
+
+    
           
         })
-  
-  
-        console.log("at end data console log---->" , data)  
+        // all(array_of_promises){
+          setTimeout(function () {
+
+            res.json(data)
+
+          }, 2000);
+        // }
+        // console.log("at end data console log---->" , data)  
         
-        res.json(data)
       })
+      // busy_hours(placeID, 'AIzaSyCUertGINeIoS4nQ7zpyuJzqyUg1PhXXws' )
+      //     .then(busyHoursData => {
+      //       console.log("something inside busy hours >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>", busyHoursData)
+      //       dataToSend.day.push(busyhours.week);
+            
+      //       res.json(busyHoursData)
+    
+            
+      //     })
       .catch((err) => {
         console.log(err)
         next(err);
       });
     });
 
+
+    
 
   
 
