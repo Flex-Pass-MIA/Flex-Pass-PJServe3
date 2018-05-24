@@ -24,41 +24,61 @@ axios.get(`https://maps.googleapis.com/maps/api/place/textsearch/json?query=${se
       // console.log("this is the data--->", result.data) //<<<gives info
       const data = [];
   
-      const dataToSend = {
-        name:'',
-        place_id:'',
-        day:[],
-      };
+      
+      // array_of_promises = []
       
       const idSearch = result.data.results;
-  
+      
       idSearch.forEach(id => {
-  
-  
-        dataToSend.name = id.name;
-        dataToSend.place_id = id.place_id;
-        placeID = id.place_id;
-  
+        
+          const dataToSend = {
+            name:'',
+            place_id:'',
+            week: [],
+            formatted_address: '',
+            rating: ''
+          };
+
+          dataToSend.name = id.name;
+          dataToSend.place_id = id.place_id;
+          dataToSend.formatted_address = id.formatted_address;
+          dataToSend.rating = id.rating;
+          placeID = id.place_id;
+          // var week = [];
+
+          // const the_promise_thing;
+
+          // array_of_promises.push(the_promise_thing);
+    
+          // the_promise_thing = busy_hours(placuOd,...
+
           busy_hours(placeID, 'AIzaSyCUertGINeIoS4nQ7zpyuJzqyUg1PhXXws' )
           .then(busyhours => {
-            dataToSend.day.push(busyhours.week);
-            
-            console.log("something something something something", data)
-  
+           dataToSend.week.push(busyhours.week);
+            // console.log("something something something something", data)
+            console.log(`hey hey hey hey hey`, dataToSend.week.day)
+            // console.log(`YOOOOOO======>>>>>>>`, busyhours);
+            // console.log(`YMAMAMAMAMAMA======>>>>>>>`, week);
             
           });
-          
+         
           return data.push(Object.assign({},dataToSend));
-  
-          console.log("in the middle data console log ----->", data)
           
+          
+          
+          
+          // console.log("in the middle data console log ----->", data)
           
         })
-  
-  
-        console.log("at end data console log---->" , data)  
         
-        res.json(data)
+        // all(array_of_promises){
+          // res.json(data)
+          // }
+          // console.log("at end data console log---->" , data)  
+          
+          setTimeout(function(){
+            res.json(data)
+          }, 2000);
       })
       .catch((err) => {
         console.log(err)
@@ -66,6 +86,8 @@ axios.get(`https://maps.googleapis.com/maps/api/place/textsearch/json?query=${se
       });
     });
 
+
+    
 
   
 
