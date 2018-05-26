@@ -4,9 +4,28 @@ const passport    = require('passport');
 const User        = require("../models/user");
 const flash       = require("connect-flash");
 const ensureLogin = require("connect-ensure-login");
-
 const bcrypt = require("bcryptjs");
 const bcryptSalt = 10;
+
+
+//Sign Up
+router.get('/register', (req, res, next) => {
+  res.send('REGEISTER')
+})
+//Authenticate
+router.get('/authenticate', (req, res, next) => {
+  res.send('AUTHENTICATE')
+})
+
+// Profile
+router.get('/profile', (req, res, next) => {
+  res.send('PROFILE')
+})
+
+//Validate
+router.get('/validate', (req, res, next) => {
+  res.send('VALIDATE')
+})
 
 router.post('/signup', (req, res, next) => {
   if (req.body.username === '' || req.body.password === '' || req.body.email === '' ||
@@ -38,53 +57,95 @@ router.post('/signup', (req, res, next) => {
         res.status(400).json({ message: "Something went wrong" });
         return;
       }
+      req.login(newUser, (err) => {
+        if (err) {
+          res.status(500).json({ message: 'Something went wrong' });
+          return;
+        }
+        res.status(200).json(req.user);
+      });
     });
   });
 });
 
-router.get("/login", (req, res, next) => {
-  res.render("auth/login", { "message": req.flash("error") });
-});
+
+// router.post('/login', (req, res, next) => {
+//   passport.authenticate('local', (err, theUser, failureDetails) => {
+//     // console.log(`the user---> ${theUser}`)
+//     if (err) {
+//       res.status(500).json({ message: 'Something went wrong' });
+//       return;
+//     }
+
+//     if (!theUser) {
+//       res.status(401).json(failureDetails);
+//       return;
+//     }
+
+//     req.login(theUser, (err) => {
+//       if (err) {
+//         res.status(500).json({ message: 'Something went wrong' });
+//         return;
+//       }
+
+//       // We are now logged in (notice req.user)
+//       res.status(200).json(req.user);
+//     });
+//   })(req, res, next);
+// });
 
 router.post('/login', (req, res, next) => {
-  passport.authenticate('local', (err, theUser, failureDetails) => {
-    // console.log(`the user---> ${theUser}`)
-    if (err) {
-      res.status(500).json({ message: 'Something went wrong' });
+  // console.log("post login: ", req.body)
+  User.findOne({ username: req.body.username })
+  .then((userFromDb) => {
+    // console.log("user from db =====>>>>>======>>>>>=====>>>>>>", userFromDb)
+    if (userFromDb === null) {
+      res.status(400).json({ message: "That email is invalid. Try again." });
       return;
     }
+    const isPasswordGood = bcrypt.compareSync(req.body.password, userFromDb.password);
 
-    if (!theUser) {
-      res.status(401).json(failureDetails);
+    // console.log(userFromDb);
+
+    if (isPasswordGood === false) {
+      res.status(400).json({ message: "That password is invalid. Try again." });
       return;
     }
-
-    req.login(theUser, (err) => {
-      if (err) {
-        res.status(500).json({ message: 'Something went wrong' });
-        return;
-      }
-
-      // We are now logged in (notice req.user)
-      res.status(200).json(req.user);
+    req.login(userFromDb, (err) => {
+      // clear the "encryptedPassword" before sending the user userInfo// (otherwise it's a security risk)
+      userFromDb.password = undefined;
+// console.log("do i have user here: ", userFromDb)
+        res.status(200).json(
+          // isLoggedIn: true,
+          // userInfo: userFromDb
+          userFromDb
+        );
     });
-  })(req, res, next);
-});
+  })
+  .catch((err) => {
+    console.log("POST/login ERROR!");
+    console.log(err);
+
+    res.status(500).json({ error: "Log in database error" });
+  });
+});  // Post LogIn
+
 
 router.get('/loggedin', (req, res, next) => {
+  console.log("user in the backend: ", req.user)
   if (req.isAuthenticated()) {
     res.status(200).json(req.user);
     return;
   }
 
-  res.status(403).json({ message: 'Unauthorized' });
+  res.json({ message: 'Unauthorized' });
 });
 
-router.post('/logout', (req, res, next) => {
+router.post("/logout", (req, res) => {
   req.logout();
+  // res.redirect("/login");
   res.status(200).json({ message: 'Success' });
 });
-
 
 
 

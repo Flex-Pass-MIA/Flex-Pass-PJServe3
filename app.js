@@ -54,6 +54,7 @@ app.use(favicon(path.join(__dirname, 'public', 'images', 'favicon.ico')));
 // default value for title local
 
 app.locals.title = 'Express - Generated with IronGenerator';
+app.use(flash());
 
 // Passport
 
@@ -84,7 +85,6 @@ passport.use(new LocalStrategy({ passReqToCallback: true}, (req, username, passw
   });
 }));
 
-app.use(flash());
 
 app.use(session({
   secret: "our-passport-local-strategy-app",
