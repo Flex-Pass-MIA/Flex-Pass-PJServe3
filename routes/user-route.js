@@ -33,7 +33,7 @@ router.post('/signup', (req, res, next) => {
   req.body.dob === '' || req.body.address === '' || req.body.membership === '') {
     res.status(400).json({ message: "Please fill information"})
   }
-  User.findOne({ userName: req.body.username }, "username", (err, user) => {
+  User.findOne({ username: req.body.username }, "username", (err, user) => {
     if (user !== null) {
       res.status(400).json({ message: "Sorry, that username already exists" });
       return;
@@ -47,6 +47,7 @@ router.post('/signup', (req, res, next) => {
       lastname: req.body.lastname,
       dob: req.body.dob,
       address: req.body.address,
+      email: req.body.email,
       phone: req.body.phone,
       membership: req.body.membership,
       username: req.body.username,

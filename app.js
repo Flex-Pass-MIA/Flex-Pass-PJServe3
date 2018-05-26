@@ -107,6 +107,8 @@ const searchRoute = require('./routes/search-route');
 app.use('/search', searchRoute);
 const index = require('./routes/index');
 app.use('/', index);
+const gymRoute = require('./routes/gym-route');
+app.use('/', gymRoute);
 
 
 module.exports = app;

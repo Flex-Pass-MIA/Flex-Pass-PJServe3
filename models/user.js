@@ -9,8 +9,11 @@ const userSchema = new Schema({
   email: String,
   phone: String,
   membership: {type: String, enum: ['flex1', 'flex2', 'flex3']},
+  flexId: String,
   username: String,
   password: String,
+}, {
+  usePushEach: true
 });
 
 const User = mongoose.model("User", userSchema);
