@@ -18,67 +18,89 @@ router.post('/gymsearch', (req, res, next) => {
   const search = req.body.searchTerm;
   console.log('body whatever this is ----------', search)
 
-axios.get(`https://maps.googleapis.com/maps/api/place/textsearch/json?query=${search}&type=gym&location=25.761681,-80.191788&radius=8050&key=AIzaSyCUertGINeIoS4nQ7zpyuJzqyUg1PhXXws`)
+axios.get(`https://maps.googleapis.com/maps/api/place/textsearch/json?query=${search}&type=gym&location=25.761681,-80.191788&radius=8050&key=AIzaSyBHsQ5mbZ20-fri8maikgz2H_6Wmt64LZ0`)
     .then((result)=>{
-      // console.log("this is the result!!--->", result) //<<<just objects
-      // console.log("this is the data--->", result.data) //<<<gives info
+      
+
+      const finalData = [];
+   
       const data = [];
-  
       
-      // array_of_promises = []
-      
+      // const busyData = [];
+
       const idSearch = result.data.results;
+
       
       idSearch.forEach(id => {
         
           const dataToSend = {
             name:'',
             place_id:'',
-            week: [],
             formatted_address: '',
-            rating: ''
+            rating: '',
+            busyTimes: [],
+            lat: '',
+            lng: '',
           };
+
+          const busyData = [];
+          // console.log("this is the ID", id)
 
           dataToSend.name = id.name;
           dataToSend.place_id = id.place_id;
           dataToSend.formatted_address = id.formatted_address;
           dataToSend.rating = id.rating;
+          console.log('this is the location lat', id.geometry.location.lat)
+          dataToSend.lat = id.geometry.location.lat;
+          dataToSend.lng = id.geometry.location.lng;
           placeID = id.place_id;
-          // var week = [];
 
-          // const the_promise_thing;
+         
 
-          // array_of_promises.push(the_promise_thing);
-    
-          // the_promise_thing = busy_hours(placuOd,...
 
           busy_hours(placeID, 'AIzaSyCUertGINeIoS4nQ7zpyuJzqyUg1PhXXws' )
-          .then(busyhours => {
-           dataToSend.week.push(busyhours.week);
-            // console.log("something something something something", data)
-            console.log(`hey hey hey hey hey`, dataToSend.week.day)
-            // console.log(`YOOOOOO======>>>>>>>`, busyhours);
-            // console.log(`YMAMAMAMAMAMA======>>>>>>>`, week);
+          .then(popTimes => {
+          //  dataToSend.week.push(popTimes.week);
+
+          // console.log("these are the results", popTimes)
+
+
+            popTimes.week.forEach(dayOfWeek=>{
+              // console.log('this is the day of week', dayOfWeek);
+              const busyHours = {
+                day:'',
+                busyInfo: [],
+              }
+              busyHours.day = dayOfWeek.day;
+              busyHours.busyInfo.push(dayOfWeek.hours);
+              busyData.push(Object.assign({},busyHours));
+              
+
+    
+            })
+
             
           });
-         
-          return data.push(Object.assign({},dataToSend));
+
+          
+          // console.log('this is the busy data ---->', busyTimes);
+
+          dataToSend.busyTimes.push(busyData)
           
           
-          
-          
-          // console.log("in the middle data console log ----->", data)
+          data.push(Object.assign({},dataToSend));
+        
+
           
         })
-        
-        // all(array_of_promises){
-          // res.json(data)
-          // }
-          // console.log("at end data console log---->" , data)  
-          
+
+         
           setTimeout(function(){
-            res.json(data)
-          }, 2000);
+
+
+            res.json(data);
+            
+          }, 2500);
       })
       .catch((err) => {
         console.log(err)
@@ -93,75 +115,7 @@ axios.get(`https://maps.googleapis.com/maps/api/place/textsearch/json?query=${se
 
   module.exports = router; 
 
-  // console.log("check this !!!--->", req.body.search)
   
-  // const search = 'equinox brickell';
-
-
-
-    // console.log("idsearch is: ---> ",idSearch)
-
-      // console.log(`place id --->${result.data.results[0].place_id}`)
-    // console.log("information about results ==========================================")
-    // console.log(result.data)
-    // console.log("information about results ==========================================")
-  
-        // console.log(`*!*!*!*!*!**!!**!*!*!*!*!*!*!${idSearch}*!**!*!*!*!*!*!*!*!**!*!*!`);
-      // console.log("element???" + id.place_id);
-      // console.log(`each placeID ${placeID}`);
-  
-  
-  
-  
-  //console.log("data to send", dataToSend)
-      // dataToSend.name = id.name;
-      // console.log(`each placeID ${placeID}`);
-  
-  // console.log (busyhours)
-//  console.log('place id data ----------->', data); 
-//  console.log("before: ", dataToSend.week.length);
-//  dataToSend.week.push(data.week)
-  
-  
-  
-  
-  // console.log("data to send in out: ", dataToSend)
-  
-  // result.data.results.forEach(element => {
-    
-    // console.log("element???" + element.place_id)
-    //   return placeID = element.place_id;
-    // });
-    
-    
-    // res.json(idSearch)
-    
-    // console.log(result.data)
-    
-    
-    //  console.log("data to send", dataToSend)
-     
-    // console.log('kajshdfkjhdasjkkjdhasf',data)
-
-    // console.log("after: ", dataToSend.week.length);
-    // res.json(dataToSend)
-
-  //  data.week.forEach(day=>{
-  //    dayOfWeek = day.day;
-     
-  //   //  hoursOfDay = day.hours;
-  //   //  console.log('day of week ------>' + dayOfWeek);
-  //    day.hours.forEach(hours=>{
-  //       hourOfDay = hours.hour;
-  //       busyPercent = hours.percentage;
-  //       // console.log('time---->' + hourOfDay + ' ------ busy percent---->' + busyPercent)
-
-  //    })
-
-  //  })
-   
-  // console.log("data to send in mid: ", dataToSend)
-
 
 
 
