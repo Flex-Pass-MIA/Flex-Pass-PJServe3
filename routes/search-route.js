@@ -30,7 +30,6 @@ axios.get(`https://maps.googleapis.com/maps/api/place/textsearch/json?query=${se
 
       const idSearch = result.data.results;
 
-      console.log("these are the results", idSearch)
       
       idSearch.forEach(id => {
         
@@ -39,23 +38,32 @@ axios.get(`https://maps.googleapis.com/maps/api/place/textsearch/json?query=${se
             place_id:'',
             formatted_address: '',
             rating: '',
-            busyTimes: []
+            busyTimes: [],
+            lat: '',
+            lng: '',
           };
 
           const busyData = [];
-
+          // console.log("this is the ID", id)
 
           dataToSend.name = id.name;
           dataToSend.place_id = id.place_id;
           dataToSend.formatted_address = id.formatted_address;
           dataToSend.rating = id.rating;
+          console.log('this is the location lat', id.geometry.location.lat)
+          dataToSend.lat = id.geometry.location.lat;
+          dataToSend.lng = id.geometry.location.lng;
           placeID = id.place_id;
+
          
 
 
           busy_hours(placeID, 'AIzaSyCUertGINeIoS4nQ7zpyuJzqyUg1PhXXws' )
           .then(popTimes => {
           //  dataToSend.week.push(popTimes.week);
+
+          // console.log("these are the results", popTimes)
+
 
             popTimes.week.forEach(dayOfWeek=>{
               // console.log('this is the day of week', dayOfWeek);
