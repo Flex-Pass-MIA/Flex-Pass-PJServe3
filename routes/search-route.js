@@ -29,8 +29,15 @@ axios.get(`https://maps.googleapis.com/maps/api/place/textsearch/json?query=${se
       // const busyData = [];
 
       const idSearch = result.data.results;
+  
+      var  arrLength = idSearch.length;
+      var rand = Math.floor(Math.random() * 10);
 
-      
+      if(arrLength > 7){
+      idSearch.splice( rand, arrLength - 7);
+      }
+
+      //start of for each
       idSearch.forEach(id => {
         
           const dataToSend = {
@@ -41,8 +48,11 @@ axios.get(`https://maps.googleapis.com/maps/api/place/textsearch/json?query=${se
             busyTimes: [],
             lat: '',
             lng: '',
+            pic: '',
           };
 
+          
+          // const imgRef = [];
           const busyData = [];
           // console.log("this is the ID", id)
 
@@ -64,7 +74,7 @@ axios.get(`https://maps.googleapis.com/maps/api/place/textsearch/json?query=${se
 
           // console.log("these are the results", popTimes)
 
-
+            if(popTimes.week){
             popTimes.week.forEach(dayOfWeek=>{
               // console.log('this is the day of week', dayOfWeek);
               const busyHours = {
@@ -77,30 +87,79 @@ axios.get(`https://maps.googleapis.com/maps/api/place/textsearch/json?query=${se
               
 
     
-            })
+            })}
 
             
-          });
+          })
+          .catch((err)=>{
+            console.log(err)
+            next(err);
+          })
 
+          console.log("this is the photo ref id", id.photos)
+
+          var imgData = '';
+          setTimeout(function(){
+          if(id.photos){
+          id.photos.forEach(photoRef =>{
+            const reference = photoRef.photo_reference;
+            
+            console.log("these are the photo references", photoRef )
+            axios.get(`https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=${reference}&key=AIzaSyCUertGINeIoS4nQ7zpyuJzqyUg1PhXXws`)
+            .then( (refResult) =>{
+
+              // console.log("this is the result of the photo ref", refResult.config.url);
+              const theImgUrl = {
+                imgUrl: ''
+              }
+
+              theImgUrl.imgUrl = refResult.config.url;
+              console.log("this is the img url????",theImgUrl)
+              
+              imgData = theImgUrl.imgUrl
+              console.log("inside the THEN img data", imgData)
+
+              dataToSend.pic = imgData;
+              console.log('hows datato sned? inside---->', dataToSend);
+
+            })
+            .catch((err) => {
+              console.log(err)
+              next(err);
+            });
+            
+
+            
+
+          })}},2000);
+
+
+          console.log("OUTSIDE--->", imgData)
+
+
+          // 
           
-          // console.log('this is the busy data ---->', busyTimes);
-
+          console.log('hows datato sned? outside--->', dataToSend);
+          // dataToSend.img.push(imgData)
           dataToSend.busyTimes.push(busyData)
           
-          
+          setTimeout(function(){
           data.push(Object.assign({},dataToSend));
+          },3500);
         
 
           
         })
 
+        /////end of for each
+
          
           setTimeout(function(){
 
-
+            console.log("this is the final data", data)
             res.json(data);
             
-          }, 2500);
+          }, 4500);
       })
       .catch((err) => {
         console.log(err)
