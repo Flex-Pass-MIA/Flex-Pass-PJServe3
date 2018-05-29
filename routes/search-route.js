@@ -28,14 +28,22 @@ axios.get(`https://maps.googleapis.com/maps/api/place/textsearch/json?query=${se
       
       // const busyData = [];
 
-      const idSearch = result.data.results;
+      var idSearch = result.data.results;
+
+      console.log("length before splice====>", idSearch.length)
+      console.log("id search before splice====>", idSearch)
+
   
       var  arrLength = idSearch.length;
-      var rand = Math.floor(Math.random() * 10);
+      var rand = Math.floor(Math.random() * 7);
 
       if(arrLength > 7){
-      idSearch.splice( rand, arrLength - 7);
+      idSearch = idSearch.splice(0, 7);
       }
+
+      console.log("length after splice====>", idSearch.length)
+      console.log("id search after splice ====>", idSearch)
+
 
       //start of for each
       idSearch.forEach(id => {
@@ -96,7 +104,7 @@ axios.get(`https://maps.googleapis.com/maps/api/place/textsearch/json?query=${se
             next(err);
           })
 
-          console.log("this is the photo ref id", id.photos)
+          // console.log("this is the photo ref id", id.photos)
 
           var imgData = '';
           setTimeout(function(){
@@ -104,7 +112,7 @@ axios.get(`https://maps.googleapis.com/maps/api/place/textsearch/json?query=${se
           id.photos.forEach(photoRef =>{
             const reference = photoRef.photo_reference;
             
-            console.log("these are the photo references", photoRef )
+            // console.log("these are the photo references", photoRef )
             axios.get(`https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=${reference}&key=AIzaSyCUertGINeIoS4nQ7zpyuJzqyUg1PhXXws`)
             .then( (refResult) =>{
 
@@ -114,13 +122,13 @@ axios.get(`https://maps.googleapis.com/maps/api/place/textsearch/json?query=${se
               }
 
               theImgUrl.imgUrl = refResult.config.url;
-              console.log("this is the img url????",theImgUrl)
+              // console.log("this is the img url????",theImgUrl)
               
               imgData = theImgUrl.imgUrl
-              console.log("inside the THEN img data", imgData)
+              // console.log("inside the THEN img data", imgData)
 
               dataToSend.pic = imgData;
-              console.log('hows datato sned? inside---->', dataToSend);
+              // console.log('hows datato sned? inside---->', dataToSend);
 
             })
             .catch((err) => {
@@ -134,12 +142,12 @@ axios.get(`https://maps.googleapis.com/maps/api/place/textsearch/json?query=${se
           })}},2000);
 
 
-          console.log("OUTSIDE--->", imgData)
+          // console.log("OUTSIDE--->", imgData)
 
 
           // 
           
-          console.log('hows datato sned? outside--->', dataToSend);
+          // console.log('hows datato sned? outside--->', dataToSend);
           // dataToSend.img.push(imgData)
           dataToSend.busyTimes.push(busyData)
           
@@ -156,7 +164,7 @@ axios.get(`https://maps.googleapis.com/maps/api/place/textsearch/json?query=${se
          
           setTimeout(function(){
 
-            console.log("this is the final data", data)
+            // console.log("this is the final data", data)
             res.json(data);
             
           }, 4500);
