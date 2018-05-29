@@ -133,7 +133,7 @@ router.post('/login', (req, res, next) => {
 
 
 router.get('/loggedin', (req, res, next) => {
-  console.log("user in the backend: ", req.user)
+  console.log("user in the user route backend: ", req.user)
   if (req.isAuthenticated()) {
     res.status(200).json(req.user);
     return;
