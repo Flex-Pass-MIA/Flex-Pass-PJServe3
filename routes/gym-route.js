@@ -245,6 +245,7 @@ router.post('/flex', (req, res, next) => {
   });
 });
 
+
 router.post('/delete-gym', (req, res) => {
   User.findById(req.body.userId)
   .then(user => {
@@ -268,7 +269,31 @@ router.post('/delete-gym', (req, res) => {
   })
 })
 
+router.post('/gymlist/editSingleGym', (req, res, next)=>{
+  // const updatedTask = {
+  //     title: title
 
+  // }
+  User.findById(req.body._id)
+  .then(user => {
+
+    Gym.findByIdAndUpdate(req.params.id, req.body)
+    .then((updatedTask)=>{
+      res.json(updatedTask);
+    })
+    .catch((err)=>{
+      res.json(err);
+    })
+  
+  
+ 
+
+
+  });
+
+
+
+})
 
 
 
