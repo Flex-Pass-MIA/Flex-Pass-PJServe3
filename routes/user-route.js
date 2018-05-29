@@ -8,25 +8,6 @@ const bcrypt = require("bcryptjs");
 const bcryptSalt = 10;
 
 
-//Sign Up
-router.get('/register', (req, res, next) => {
-  res.send('REGEISTER')
-})
-//Authenticate
-router.get('/authenticate', (req, res, next) => {
-  res.send('AUTHENTICATE')
-})
-
-// Profile
-router.get('/profile', (req, res, next) => {
-  res.send('PROFILE')
-})
-
-//Validate
-router.get('/validate', (req, res, next) => {
-  res.send('VALIDATE')
-})
-
 router.post('/signup', (req, res, next) => {
   if (req.body.username === '' || req.body.password === '' || req.body.email === '' ||
   req.body.firstname === '' || req.body.lastname === '' || req.body.phone === '' ||
@@ -116,7 +97,8 @@ router.post('/login', (req, res, next) => {
       // clear the "encryptedPassword" before sending the user userInfo// (otherwise it's a security risk)
       userFromDb.password = undefined;
 // console.log("do i have user here: ", userFromDb)
-        res.status(200).json(
+          console.log(userFromDb)
+          res.status(200).json(
           // isLoggedIn: true,
           // userInfo: userFromDb
           userFromDb
