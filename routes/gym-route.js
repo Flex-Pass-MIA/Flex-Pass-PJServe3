@@ -78,11 +78,12 @@ router.post('/select-gyms', (req, res, next) => {
 
 
 router.post('/flex', (req, res, next) => {
-  //console.log("user in the SUPER backend: ", req.body._id)
+  console.log("user in the SUPER backend: ", req.body._id)
   User.findById(req.body._id)
   .then(user => {
-      // console.log(`this is the user======> `, user)
+      console.log(`USER ON FLEX ROUTE======> `, user)
     if(user.flexId){
+      console.log(`What is FLEXID`, user.flexId)
       Gym.find({_id:user.flexId})
       .then(usersGyms => { 
       //  console.log(`This is the users information`, usersGyms) 
@@ -245,6 +246,29 @@ router.post('/flex', (req, res, next) => {
 });
 
 
+router.post('/delete-gym', (req, res) => {
+  User.findById(req.body.userId)
+  .then(user => {
+    // console.log("user: ", user)
+    if(user.flexId) {
+      Gym.find({_id:user.flexId})
+      .then(usersGyms => { 
+        console.log("before: ", usersGyms[0].gymList)
+          var toBeDeleted = usersGyms[0].gymList.indexOf(req.body.gymId);
+          usersGyms[0].gymList.splice(toBeDeleted, 1);
+          console.log("after: ", usersGyms[0].gymList)
+          usersGyms[0].save( err => {
+            if(err){
+              res.json(err);
+              return;
+            }
+            res.status(200).json(usersGyms);
+          })
+      })
+    }
+  })
+})
+
 router.post('/gymlist/editSingleGym', (req, res, next)=>{
   // const updatedTask = {
   //     title: title
@@ -262,7 +286,7 @@ router.post('/gymlist/editSingleGym', (req, res, next)=>{
     })
   
   
-  
+ 
 
 
   });
