@@ -110,6 +110,9 @@ app.use(
   })
 );
 
+app.use((req, res, next ) => {
+  res.sendfile(__dirname + './public/Client/index.html')
+})
 
 
 const authRoute = require('./routes/user-route');
@@ -121,8 +124,5 @@ app.use('/', index);
 const gymRoute = require('./routes/gym-route');
 app.use('/', gymRoute);
 
-app.use((req, res, next ) => {
-  res.sendfile(__dirname + './public/Client/index.html')
-})
 
 module.exports = app;
