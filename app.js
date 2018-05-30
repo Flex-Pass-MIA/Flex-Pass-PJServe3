@@ -20,12 +20,21 @@ const cors         = require('cors');
 
 mongoose.Promise = Promise;
 mongoose
-  .connect(process.env.MONGODB_URI , {useMongoClient: true})
+  .connect(process.env.MONGODB_URI, {useMongoClient: true})
   .then(() => {
     console.log('Connected to Mongo!')
   }).catch(err => {
     console.error('Error connecting to mongo', err)
   });
+
+// mongoose.Promise = Promise;
+// mongoose
+//   .connect('mongodb://localhost/server-flex', {useMongoClient: true})
+//   .then(() => {
+//     console.log('Connected to Mongo!')
+//   }).catch(err => {
+//     console.error('Error connecting to mongo', err)
+//   });
 
 const app_name = require('./package.json').name;
 const debug = require('debug')(`${app_name}:${path.basename(__filename).split('.')[0]}`);
@@ -101,9 +110,6 @@ app.use(
   })
 );
 
-app.use((req, res, next ) => {
-  res.sendfile(__dirname + './public/Client/index.html')
-})
 
 
 const authRoute = require('./routes/user-route');
@@ -115,5 +121,8 @@ app.use('/', index);
 const gymRoute = require('./routes/gym-route');
 app.use('/', gymRoute);
 
+app.use((req, res, next ) => {
+  res.sendfile(__dirname + './public/Client/index.html')
+})
 
 module.exports = app;
