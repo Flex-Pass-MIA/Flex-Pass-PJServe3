@@ -111,7 +111,7 @@ app.use(
 );
 
 app.use((req, res, next ) => {
-  res.sendfile(__dirname + './public/Client/index.html')
+  res.sendfile(__dirname + '/public/Client/index.html')
 })
 
 
