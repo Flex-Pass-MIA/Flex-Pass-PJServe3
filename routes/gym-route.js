@@ -19,8 +19,8 @@ router.post('/select-gyms', (req, res, next) => {
     if(user.flexId){
       Gym.findById(user.flexId)
       .then( foundGym => {
-        console.log("heyyy: ", user.membership === 'flex1');
-        console.log("length: ", foundGym.gymList.length)
+        // console.log("heyyy: ", user.membership === 'flex1');
+        // console.log("length: ", foundGym.gymList.length)
 
         if ((user.membership === 'flex1') && (foundGym.gymList.length < 2)){
           foundGym.gymList.push(req.body.gymId);
@@ -81,13 +81,13 @@ router.post('/flex', (req, res, next) => {
   console.log("user in the SUPER backend: ", req.body._id)
   User.findById(req.body._id)
   .then(user => {
-      console.log(`USER ON FLEX ROUTE======> `, user)
+      // console.log(`USER ON FLEX ROUTE======> `, user)
     if(user.flexId){
-      console.log(`What is FLEXID`, user.flexId)
+      // console.log(`What is FLEXID`, user.flexId)
       Gym.find({_id:user.flexId})
       .then(usersGyms => { 
       //  console.log(`This is the users information`, usersGyms) 
-        console.log("the gyms for this current user",usersGyms[0].gymList)
+        // console.log("the gyms for this current user",usersGyms[0].gymList)
         
         const data = [];
 
@@ -123,7 +123,7 @@ router.post('/flex', (req, res, next) => {
               dataToSend.place_id = id.place_id;
               dataToSend.formatted_address = id.formatted_address;
               dataToSend.rating = id.rating;
-              console.log('this is the location lat', id.geometry.location.lat)
+              // console.log('this is the location lat', id.geometry.location.lat)
               dataToSend.lat = id.geometry.location.lat;
               dataToSend.lng = id.geometry.location.lng;
               placeID = id.place_id;
@@ -269,27 +269,35 @@ router.post('/delete-gym', (req, res) => {
   })
 })
 
-router.post('/gymlist/editSingleGym', (req, res, next)=>{
+router.post('/gymlist/replaceGym', (req, res, next)=>{
   // const updatedTask = {
   //     title: title
 
   // }
-  User.findById(req.body._id)
+  User.findById(req.body.userId)
   .then(user => {
-
-    Gym.findByIdAndUpdate(req.params.id, req.body)
-    .then((updatedTask)=>{
-      res.json(updatedTask);
-    })
-    .catch((err)=>{
-      res.json(err);
-    })
-  
-  
- 
+    // console.log("user: ", user)
+    if(user.flexId) {
+      Gym.find({_id:user.flexId})
+      .then(usersGyms => { 
+        console.log("before: ", usersGyms[0].gymList)
+          var toBeReplaced = usersGyms[0].gymList.indexOf(req.body.gymId);
+          var originalGym = usersGyms[0].gymList.indexOf(req.body.gymId);
+          usersGyms[0].gymList.splice(toBeReplaced, 1);
+          console.log("after: ", usersGyms[0].gymList)
 
 
-  });
+
+          usersGyms[0].save( err => {
+            if(err){
+              res.json(err);
+              return;
+            }
+            res.status(200).json(usersGyms);
+          })
+      })
+    }
+  })
 
 
 
