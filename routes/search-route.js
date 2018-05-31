@@ -67,7 +67,7 @@ axios.get(`https://maps.googleapis.com/maps/api/place/textsearch/json?query=${se
           dataToSend.name = id.name;
           dataToSend.place_id = id.place_id;
           dataToSend.formatted_address = id.formatted_address;
-          dataToSend.rating = id.rating;
+          dataToSend.rating = id.rating * 20;
           console.log('this is the location lat', id.geometry.location.lat)
           dataToSend.lat = id.geometry.location.lat;
           dataToSend.lng = id.geometry.location.lng;
