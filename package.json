@@ -12,6 +12,7 @@
     "bcryptjs": "^2.4.3",
     "body-parser": "~1.18.2",
     "busy-hours": "0.0.5",
+    "chart.js": "^2.7.2",
     "connect-ensure-login": "^0.1.1",
     "connect-flash": "^0.1.1",
     "cookie-parser": "~1.4.3",
