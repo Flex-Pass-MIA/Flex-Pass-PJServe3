@@ -125,7 +125,10 @@ router.get('/loggedin', (req, res, next) => {
 });
 
 router.post("/logout", (req, res) => {
-  req.logout();
+  req.logOut();
+  // req.session.destroy();
+
+  console.log("this is req session", req.user);
   // res.redirect("/login");
   res.status(200).json({ message: 'Success' });
 });
