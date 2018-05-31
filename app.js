@@ -18,6 +18,15 @@ const LocalStrategy= require("passport-local").Strategy;
 const flash        = require("connect-flash");
 const cors         = require('cors');
 
+// mongoose.Promise = Promise;
+// mongoose
+//   .connect(process.env.MONGODB_URI, {useMongoClient: true})
+//   .then(() => {
+//     console.log('Connected to Mongo!')
+//   }).catch(err => {
+//     console.error('Error connecting to mongo', err)
+//   });
+
 mongoose.Promise = Promise;
 mongoose
   .connect('mongodb://localhost/server-flex', {useMongoClient: true})
@@ -100,6 +109,11 @@ app.use(
     origin: ["http://localhost:4200"]  // these are the domains that are allowed
   })
 );
+
+// app.use((req, res, next ) => {
+//   res.sendfile(__dirname + '/public/Client/index.html')
+// })
+
 
 const authRoute = require('./routes/user-route');
 app.use('/api', authRoute);

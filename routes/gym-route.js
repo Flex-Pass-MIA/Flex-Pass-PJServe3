@@ -13,7 +13,7 @@ const busy_hours = require('busy-hours');
 
 router.post('/select-gyms', (req, res, next) => {
   // console.log("who is the user: ", req.user)
-  // console.log("what is the body here: ", req.body)
+  console.log("what is the body here: ", req.body)
   User.findById(req.body.userId)
   .then(user => {
     if(user.flexId){
@@ -28,7 +28,7 @@ router.post('/select-gyms', (req, res, next) => {
           foundGym.gymList.push(req.body.gymId);
         } else if ((user.membership === 'flex3') && (foundGym.gymList.length < 10)){
           foundGym.gymList.push(req.body.gymId);
-        } else {
+        } else {d
           // console.log("blahhhhhhh");
           res.json({message: "Gym limit exceeded."})
           return;
@@ -122,7 +122,7 @@ router.post('/flex', (req, res, next) => {
               dataToSend.name = id.name;
               dataToSend.place_id = id.place_id;
               dataToSend.formatted_address = id.formatted_address;
-              dataToSend.rating = id.rating;
+              dataToSend.rating = id.rating * 20;
               // console.log('this is the location lat', id.geometry.location.lat)
               dataToSend.lat = id.geometry.location.lat;
               dataToSend.lng = id.geometry.location.lng;
