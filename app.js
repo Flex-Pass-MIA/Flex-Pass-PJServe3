@@ -88,8 +88,8 @@ passport.use(new LocalStrategy({ passReqToCallback: true}, (req, username, passw
 
 app.use(session({
   secret: "our-passport-local-strategy-app",
-  resave: true,
-  saveUninitialized: true
+  resave: false,
+  saveUninitialized: false
 }));
 
 app.use(passport.initialize());
