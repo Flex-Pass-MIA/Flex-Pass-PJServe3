@@ -78,6 +78,7 @@ router.post('/select-gyms', (req, res, next) => {
 
 
 router.post('/flex', (req, res, next) => {
+  console.log("bodyyyy: ", req.body)
   console.log("user in the SUPER backend: ", req.body._id)
   User.findById(req.body._id)
   .then(user => {

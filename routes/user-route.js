@@ -121,7 +121,7 @@ router.get('/loggedin', (req, res, next) => {
     return;
   }
 
-  res.json({ message: 'Unauthorized' });
+  res.json(null);
 });
 
 router.post("/logout", (req, res) => {
