@@ -28,7 +28,7 @@ router.post('/select-gyms', (req, res, next) => {
           foundGym.gymList.push(req.body.gymId);
         } else if ((user.membership === 'flex3') && (foundGym.gymList.length < 10)){
           foundGym.gymList.push(req.body.gymId);
-        } else {d
+        } else {
           // console.log("blahhhhhhh");
           res.json({message: "Gym limit exceeded."})
           return;
