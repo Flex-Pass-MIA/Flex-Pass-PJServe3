@@ -18,23 +18,23 @@ const LocalStrategy= require("passport-local").Strategy;
 const flash        = require("connect-flash");
 const cors         = require('cors');
 
-// mongoose.Promise = Promise;
-// mongoose
-//   .connect(process.env.MONGODB_URI, {useMongoClient: true})
-//   .then(() => {
-//     console.log('Connected to Mongo!')
-//   }).catch(err => {
-//     console.error('Error connecting to mongo', err)
-//   });
-
 mongoose.Promise = Promise;
 mongoose
-  .connect('mongodb://localhost/server-flex', {useMongoClient: true})
+  .connect(process.env.MONGODB_URI, {useMongoClient: true})
   .then(() => {
     console.log('Connected to Mongo!')
   }).catch(err => {
     console.error('Error connecting to mongo', err)
   });
+
+// mongoose.Promise = Promise;
+// mongoose
+//   .connect('mongodb://localhost/server-flex', {useMongoClient: true})
+//   .then(() => {
+//     console.log('Connected to Mongo!')
+//   }).catch(err => {
+//     console.error('Error connecting to mongo', err)
+//   });
 
 const app_name = require('./package.json').name;
 const debug = require('debug')(`${app_name}:${path.basename(__filename).split('.')[0]}`);
