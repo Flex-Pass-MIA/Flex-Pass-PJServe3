@@ -106,13 +106,11 @@ app.use(passport.session());
 app.use(
   cors({
     credentials: true,                 // allow other domains to send cookies
-    origin: ["http://localhost:4200"]  // these are the domains that are allowed
+    origin: ["http://localhost:4200", 'https://flex-pass.herokuapp.com']  // these are the domains that are allowed
   })
 );
 
-// app.use((req, res, next ) => {
-//   res.sendfile(__dirname + '/public/Client/index.html')
-// })
+
 
 
 const authRoute = require('./routes/user-route');
@@ -123,6 +121,10 @@ const index = require('./routes/index');
 app.use('/', index);
 const gymRoute = require('./routes/gym-route');
 app.use('/', gymRoute);
+
+app.use((req, res, next ) => {
+  res.sendfile(__dirname + '/public/index.html')
+})
 
 
 module.exports = app;
