@@ -130,7 +130,7 @@ router.post("/logout", (req, res) => {
 
   console.log("this is req session", req.user);
   // res.redirect("/login");
-  res.status(200).json({ message: 'Success' });
+  res.json(null);
 });
 
 
