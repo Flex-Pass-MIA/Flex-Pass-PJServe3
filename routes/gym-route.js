@@ -76,19 +76,23 @@ router.post('/select-gyms', (req, res, next) => {
   })
 })
 
-
+//route for returning the users gyms in dashboard
 router.post('/flex', (req, res, next) => {
   console.log("bodyyyy: ", req.body)
   console.log("user in the SUPER backend: ", req.body._id)
   User.findById(req.body._id)
   .then(user => {
-      // console.log(`USER ON FLEX ROUTE======> `, user)
+
+
+    //if user has a pass, and gyms, it's gyms are saved by the google api's place ID. 
+    //using those gym id's we use google place api to return info for the current users gym
+    //within their dashboard - and for the most part repeats a similar search like in
+    //the search route
     if(user.flexId){
-      // console.log(`What is FLEXID`, user.flexId)
+
       Gym.find({_id:user.flexId})
       .then(usersGyms => { 
-      //  console.log(`This is the users information`, usersGyms) 
-        // console.log("the gyms for this current user",usersGyms[0].gymList)
+
         
         const data = [];
 
@@ -96,13 +100,9 @@ router.post('/flex', (req, res, next) => {
           
           axios.get(`https://maps.googleapis.com/maps/api/place/details/json?placeid=${gymListOfIDs}&key=AIzaSyBHsQ5mbZ20-fri8maikgz2H_6Wmt64LZ0`)
           .then((gymInfo)=>{
-            // console.log(`this is the gym info`, gymInfo.data.result)
 
-            
 
             const id = gymInfo.data.result;
-
-            // idSearch.forEach(id => {
 
               const dataToSend = {
                 name:'',
@@ -116,31 +116,27 @@ router.post('/flex', (req, res, next) => {
               };
     
               
-              // const imgRef = [];
+
               const busyData = [];
-              // console.log("this is the ID", id)
+
               
               dataToSend.name = id.name;
               dataToSend.place_id = id.place_id;
               dataToSend.formatted_address = id.formatted_address;
               dataToSend.rating = id.rating * 20;
-              // console.log('this is the location lat', id.geometry.location.lat)
               dataToSend.lat = id.geometry.location.lat;
               dataToSend.lng = id.geometry.location.lng;
               placeID = id.place_id;
-    
-             
-    
-    
+
+              
+              
               busy_hours(placeID, 'AIzaSyCUertGINeIoS4nQ7zpyuJzqyUg1PhXXws' )
               .then(popTimes => {
-              //  dataToSend.week.push(popTimes.week);
-    
-              // console.log("these are the results", popTimes)
+
     
                 if(popTimes.week){
                 popTimes.week.forEach(dayOfWeek=>{
-                  // console.log('this is the day of week', dayOfWeek);
+
                   const busyHours = {
                     day:'',
                     busyInfo: [],
@@ -149,7 +145,6 @@ router.post('/flex', (req, res, next) => {
                   busyHours.busyInfo.push(dayOfWeek.hours);
                   busyData.push(Object.assign({},busyHours));
                   
-    
         
                 })}
     
@@ -160,7 +155,6 @@ router.post('/flex', (req, res, next) => {
                 next(err);
               })
     
-              // console.log("this is the photo ref id", id.photos)
     
               var imgData = '';
               setTimeout(function(){
@@ -168,23 +162,23 @@ router.post('/flex', (req, res, next) => {
               id.photos.forEach(photoRef =>{
                 const reference = photoRef.photo_reference;
                 
-                // console.log("these are the photo references", photoRef )
+
                 axios.get(`https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=${reference}&key=AIzaSyCUertGINeIoS4nQ7zpyuJzqyUg1PhXXws`)
                 .then( (refResult) =>{
     
-                  // console.log("this is the result of the photo ref", refResult.config.url);
+
                   const theImgUrl = {
                     imgUrl: ''
                   }
     
                   theImgUrl.imgUrl = refResult.config.url;
-                  // console.log("this is the img url????",theImgUrl)
+
                   
                   imgData = theImgUrl.imgUrl
-                  // console.log("inside the THEN img data", imgData)
+
     
                   dataToSend.pic = imgData;
-                  // console.log('hows datato sned? inside---->', dataToSend);
+
     
                 })
                 .catch((err) => {
@@ -198,26 +192,11 @@ router.post('/flex', (req, res, next) => {
               })}},2750);
     
     
-              // console.log("OUTSIDE--->", imgData)
-    
-    
-              // 
-              
-              // console.log('hows datato sned? outside--->', dataToSend);
-              // dataToSend.img.push(imgData)
               dataToSend.busyTimes.push(busyData)
               
               setTimeout(function(){
               data.push(Object.assign({},dataToSend));
               },5000);
-
-
-
-
-
-
-            // })
-
 
 
 
@@ -232,12 +211,12 @@ router.post('/flex', (req, res, next) => {
 
         setTimeout(function(){
 
-          // console.log("this is the final data", data)
+
           res.json(data);
           
         }, 6500);
 
-      // res.status(200).json(usersGyms[0].gymList);
+
     })
       .catch(err =>{
       console.log('the error for the /flex get', err)
@@ -250,7 +229,7 @@ router.post('/flex', (req, res, next) => {
 router.post('/delete-gym', (req, res) => {
   User.findById(req.body.userId)
   .then(user => {
-    // console.log("user: ", user)
+
     if(user.flexId) {
       Gym.find({_id:user.flexId})
       .then(usersGyms => { 
@@ -271,13 +250,10 @@ router.post('/delete-gym', (req, res) => {
 })
 
 router.post('/gymlist/replaceGym', (req, res, next)=>{
-  // const updatedTask = {
-  //     title: title
 
-  // }
   User.findById(req.body.userId)
   .then(user => {
-    // console.log("user: ", user)
+
     if(user.flexId) {
       Gym.find({_id:user.flexId})
       .then(usersGyms => { 
