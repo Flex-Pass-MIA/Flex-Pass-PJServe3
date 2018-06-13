@@ -11,29 +11,27 @@ const bodyParser   = require('body-parser');
 const axios = require("axios");
 
 
-router.post('/gymsearch', (req, res, next) => {
+//++++++++++++THIS ROUTE FINDS THE GYMS WITH GOOGLE SEARCH API+++++++++//
+
+router.post('/gymsearch', notLogedIn, (req, res, next) => {
   
 
   console.log("req.body ???????????????????????????", req.body)
   const search = req.body.searchTerm;
   console.log('body whatever this is ----------', search)
 
-axios.get(`https://maps.googleapis.com/maps/api/place/textsearch/json?query=${search}&type=gym&location=25.761681,-80.191788&radius=8050&key=AIzaSyBHsQ5mbZ20-fri8maikgz2H_6Wmt64LZ0`)
+  axios.get(`https://maps.googleapis.com/maps/api/place/textsearch/json?query=${search}&type=gym&location=25.761681,-80.191788&radius=8050&key=AIzaSyBHsQ5mbZ20-fri8maikgz2H_6Wmt64LZ0`)
     .then((result)=>{
       
 
       const finalData = [];
    
       const data = [];
-      
-      // const busyData = [];
-
+    
       var idSearch = result.data.results;
 
-      console.log("length before splice====>", idSearch.length)
-      console.log("id search before splice====>", idSearch)
-
-  
+      //this is to limit search results to 7, api has no way to limit results
+      //using this method so user doesnt have to wait 10+ seconds for results
       var  arrLength = idSearch.length;
       var rand = Math.floor(Math.random() * 7);
 
@@ -41,11 +39,9 @@ axios.get(`https://maps.googleapis.com/maps/api/place/textsearch/json?query=${se
       idSearch = idSearch.splice(0, 7);
       }
 
-      console.log("length after splice====>", idSearch.length)
-      console.log("id search after splice ====>", idSearch)
-
-
-      //start of for each
+      //start of for each - here we go through results, and for each ID we have to save
+      //certain info and run a google places api for scraping, and google photos api for 
+      //photo for each location.
       idSearch.forEach(id => {
         
           const dataToSend = {
@@ -60,10 +56,10 @@ axios.get(`https://maps.googleapis.com/maps/api/place/textsearch/json?query=${se
           };
 
           
-          // const imgRef = [];
-          const busyData = [];
-          // console.log("this is the ID", id)
 
+          const busyData = [];
+
+          //placing information into object
           dataToSend.name = id.name;
           dataToSend.place_id = id.place_id;
           dataToSend.formatted_address = id.formatted_address;
@@ -75,80 +71,67 @@ axios.get(`https://maps.googleapis.com/maps/api/place/textsearch/json?query=${se
 
          
 
-
+          //busy hours is the google places api scraper that gets popular times information
+          //to use to create busy times graph later on
           busy_hours(placeID, 'AIzaSyCUertGINeIoS4nQ7zpyuJzqyUg1PhXXws' )
           .then(popTimes => {
-          //  dataToSend.week.push(popTimes.week);
 
-          // console.log("these are the results", popTimes)
-
+            //the if because some locations dont have busy data, causes a crash/stop when it doesn't have one.
             if(popTimes.week){
             popTimes.week.forEach(dayOfWeek=>{
-              // console.log('this is the day of week', dayOfWeek);
+
               const busyHours = {
                 day:'',
                 busyInfo: [],
-              }
-              busyHours.day = dayOfWeek.day;
-              busyHours.busyInfo.push(dayOfWeek.hours);
-              busyData.push(Object.assign({},busyHours));
-              
-
-    
-            })}
-
+                }
+                busyHours.day = dayOfWeek.day;
+                busyHours.busyInfo.push(dayOfWeek.hours);
+                busyData.push(Object.assign({},busyHours));
             
+              })} 
+ 
           })
           .catch((err)=>{
             console.log(err)
             next(err);
           })
 
-          // console.log("this is the photo ref id", id.photos)
-
+          //this runs the google photos api for each ID with its reference, needed to get the photo for each location
           var imgData = '';
           setTimeout(function(){
           if(id.photos){
           id.photos.forEach(photoRef =>{
+            
+            
             const reference = photoRef.photo_reference;
             
-            // console.log("these are the photo references", photoRef )
+
             axios.get(`https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=${reference}&key=AIzaSyCUertGINeIoS4nQ7zpyuJzqyUg1PhXXws`)
             .then( (refResult) =>{
 
-              // console.log("this is the result of the photo ref", refResult.config.url);
+
               const theImgUrl = {
                 imgUrl: ''
               }
 
               theImgUrl.imgUrl = refResult.config.url;
-              // console.log("this is the img url????",theImgUrl)
+
               
               imgData = theImgUrl.imgUrl
-              // console.log("inside the THEN img data", imgData)
+
 
               dataToSend.pic = imgData;
-              // console.log('hows datato sned? inside---->', dataToSend);
+
 
             })
             .catch((err) => {
               console.log(err)
               next(err);
             });
-            
-
-            
 
           })}},2000);
 
 
-          // console.log("OUTSIDE--->", imgData)
-
-
-          // 
-          
-          // console.log('hows datato sned? outside--->', dataToSend);
-          // dataToSend.img.push(imgData)
           dataToSend.busyTimes.push(busyData)
           
           setTimeout(function(){
@@ -161,10 +144,10 @@ axios.get(`https://maps.googleapis.com/maps/api/place/textsearch/json?query=${se
 
         /////end of for each
 
-         
+        //the set timeouts are to allow time for all the data to be pushed in--hacky way to do it --
+        //but without it all the information wouldnt push through.
           setTimeout(function(){
 
-            // console.log("this is the final data", data)
             res.json(data);
             
           }, 4500);
@@ -177,7 +160,11 @@ axios.get(`https://maps.googleapis.com/maps/api/place/textsearch/json?query=${se
 
 
     
-
+function notLogedIn(req, res, next){
+  if(!req.isAuthenticated()){
+    return next();
+  }
+}
   
 
   module.exports = router; 
